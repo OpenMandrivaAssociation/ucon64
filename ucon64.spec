@@ -15,6 +15,7 @@ URL: http://ucon64.sf.net/
 Source0: http://prdownloads.sourceforge.net/ucon64/%{name}-%{version}-src.tar.bz2
 Source1: http://prdownloads.sourceforge.net/ucon64/uf-FOX-1.1-src.tgz
 Patch0: uf-FOX-1.1-libfox1.7.patch
+Patch1: uf-FOX-1.1-ptrfix.patch
 BuildRequires: libusb-devel
 BuildRequires: zlib-devel
 BuildRequires: perl
@@ -36,6 +37,7 @@ GUI for Ucon64, a console ROM backup tool
 #setup -q -n %{name}-%{version}-%{subversion}-src
 %setup -q -n %{name}-%{version}-src -a 1
 %patch0 -p0
+%patch1 -p0
 
 #no configure script for the gui :(
 perl -pi -e "s/local\///g" uf-FOX-1.1-src/Makefile
