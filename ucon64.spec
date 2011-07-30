@@ -2,7 +2,7 @@
 %define version 2.0.0
 #define subversion 4
 #define release	4.3plf
-%define release %mkrel 7
+%define release %mkrel 8
 
 Summary: Console ROM backup tool
 Name: %{name}
