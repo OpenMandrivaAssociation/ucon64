@@ -1,0 +1,285 @@
+diff -urN uf-FOX-1.1-src/gba.cpp uf-FOX-1.1-src-pacthed/gba.cpp
+--- uf-FOX-1.1-src/gba.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-pacthed/gba.cpp	2011-07-30 23:05:55.938547915 +1100
+@@ -17,6 +17,7 @@
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ #include <fx.h>
++#include <stdint.h>
+ #include "CommandLineHandler.h"
+ #include "ComboBox.h"
+ #include "FileDialog.h"
+@@ -585,7 +586,7 @@
+ long
+ GBAFrame::onOverride(FXObject *, FXSelector, void *a_data)
+ {
+-  if ((int) a_data)
++  if ((intptr_t) a_data)
+     {
+       m_overrideGBA->enable();
+       m_overrideHeaderSize->enable();
+diff -urN uf-FOX-1.1-src/gb.cpp uf-FOX-1.1-src-pacthed/gb.cpp
+--- uf-FOX-1.1-src/gb.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-pacthed/gb.cpp	2011-07-30 23:06:13.350547926 +1100
+@@ -17,6 +17,7 @@
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ #include <fx.h>
++#include <stdint.h>
+ #include "CommandLineHandler.h"
+ #include "ComboBox.h"
+ #include "FileDialog.h"
+@@ -490,7 +491,7 @@
+ long
+ GBFrame::onOverride(FXObject *, FXSelector, void *a_data)
+ {
+-  if ((int) a_data)
++  if ((intptr_t) a_data)
+     {
+       m_overrideGameBoy->enable();
+       m_overrideHeaderSize->enable();
+diff -urN uf-FOX-1.1-src/genesis.cpp uf-FOX-1.1-src-pacthed/genesis.cpp
+--- uf-FOX-1.1-src/genesis.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-pacthed/genesis.cpp	2011-07-30 23:05:30.700547900 +1100
+@@ -17,6 +17,7 @@
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ #include <fx.h>
++#include <stdint.h>
+ #include "CommandLineHandler.h"
+ #include "ComboBox.h"
+ #include "FileDialog.h"
+@@ -837,7 +838,7 @@
+ long
+ GenesisFrame::onOverride(FXObject *, FXSelector, void *a_data)
+ {
+-  if ((int) a_data)
++  if ((intptr_t) a_data)
+     {
+       m_overrideGenesis->enable();
+       m_overrideHeaderSize->enable();
+diff -urN uf-FOX-1.1-src/misc.cpp uf-FOX-1.1-src-pacthed/misc.cpp
+--- uf-FOX-1.1-src/misc.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-pacthed/misc.cpp	2011-07-30 23:08:10.754547998 +1100
+@@ -18,6 +18,7 @@
+ */
+ #include <time.h>
+ #include <fx.h>
++#include <stdint.h>
+ #include "CommandLineHandler.h"
+ #include "ComboBox.h"
+ #include "FileDialog.h"
+@@ -852,7 +853,7 @@
+ long
+ MiscFrame::onUseDATConsoleType(FXObject *, FXSelector, void *a_data)
+ {
+-  if ((int) a_data)                             // 1 if checked
++  if ((intptr_t) a_data)                             // 1 if checked
+     {
+       updateRenameTypes();
+       setDATFilename();
+diff -urN uf-FOX-1.1-src/n64.cpp uf-FOX-1.1-src-pacthed/n64.cpp
+--- uf-FOX-1.1-src/n64.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-pacthed/n64.cpp	2011-07-30 23:07:54.538547987 +1100
+@@ -17,6 +17,7 @@
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ #include <fx.h>
++#include <stdint.h>
+ #include "CommandLineHandler.h"
+ #include "ComboBox.h"
+ #include "FileDialog.h"
+@@ -743,7 +744,7 @@
+ long
+ N64Frame::onOverride(FXObject *, FXSelector, void *a_data)
+ {
+-  if ((int) a_data)
++  if ((intptr_t) a_data)
+     {
+       m_overrideN64->enable();
+       m_overrideHeaderSize->enable();
+diff -urN uf-FOX-1.1-src/nes.cpp uf-FOX-1.1-src-pacthed/nes.cpp
+--- uf-FOX-1.1-src/nes.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-pacthed/nes.cpp	2011-07-30 23:11:35.205548122 +1100
+@@ -17,6 +17,7 @@
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ #include <fx.h>
++#include <stdint.h>
+ #include "CommandLineHandler.h"
+ #include "ComboBox.h"
+ #include "FileDialog.h"
+@@ -688,7 +689,7 @@
+ 
+   if (a_src == m_battery[0])
+     {
+-      if ((int) a_data)
++      if ((intptr_t) a_data)
+         for (n = 1; n < 3; n++)
+           m_battery[n]->disable();
+       else
+@@ -712,7 +713,7 @@
+ 
+   if (a_src == m_mirroring[0])
+     {
+-      if ((int) a_data)
++      if ((intptr_t) a_data)
+         for (n = 1; n < 7; n++)
+           m_mirroring[n]->disable();
+       else
+@@ -735,7 +736,7 @@
+ {
+   int n;
+ 
+-  if ((int) a_data)
++  if ((intptr_t) a_data)
+     for (n = 1; n < 7; n++)
+       m_controller[n]->disable();
+   else
+@@ -753,7 +754,7 @@
+ 
+   if (a_src == m_televisionType[0])
+     {
+-      if ((int) a_data)
++      if ((intptr_t) a_data)
+         for (n = 1; n < 3; n++)
+           m_televisionType[n]->disable();
+       else
+@@ -787,7 +788,7 @@
+ 
+   if (a_src == m_VRAMOverride[0])
+     {
+-      if ((int) a_data)
++      if ((intptr_t) a_data)
+         for (n = 1; n < 3; n++)
+           m_VRAMOverride[n]->disable();
+       else
+@@ -902,7 +903,7 @@
+ long
+ NESFrame::onOverride(FXObject *, FXSelector, void *a_data)
+ {
+-  if ((int) a_data)
++  if ((intptr_t) a_data)
+     {
+       m_overrideNES->enable();
+       m_overrideHeaderSize->enable();
+diff -urN uf-FOX-1.1-src/ngp.cpp uf-FOX-1.1-src-pacthed/ngp.cpp
+--- uf-FOX-1.1-src/ngp.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-pacthed/ngp.cpp	2011-07-30 23:07:09.737547961 +1100
+@@ -17,6 +17,7 @@
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ #include <fx.h>
++#include <stdint.h>
+ #include "CommandLineHandler.h"
+ #include "ComboBox.h"
+ #include "FileDialog.h"
+@@ -259,7 +260,7 @@
+ long
+ NGPFrame::onOverride(FXObject *, FXSelector, void *a_data)
+ {
+-  if ((int) a_data)
++  if ((intptr_t) a_data)
+     {
+       m_overrideNGP->enable();
+       m_overrideHeaderSize->enable();
+diff -urN uf-FOX-1.1-src/OptionsWindow.cpp uf-FOX-1.1-src-pacthed/OptionsWindow.cpp
+--- uf-FOX-1.1-src/OptionsWindow.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-pacthed/OptionsWindow.cpp	2011-07-30 22:22:04.138546319 +1100
+@@ -17,6 +17,7 @@
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ #include <fx.h>
++#include <stdint.h>
+ #include "OptionsWindow.h"
+ #include "TextFieldOption.h"
+ #include "CheckButtonOption.h"
+@@ -591,7 +592,7 @@
+ long
+ OptionsWindow::onTipText(FXObject *, FXSelector, void *a_data)
+ {
+-  int value = (int) a_data;
++  intptr_t value = (intptr_t) a_data;
+   if (value)
+     {
+       if (!m_toolTip)
+diff -urN uf-FOX-1.1-src/pce.cpp uf-FOX-1.1-src-pacthed/pce.cpp
+--- uf-FOX-1.1-src/pce.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-pacthed/pce.cpp	2011-07-30 23:06:53.859547951 +1100
+@@ -17,6 +17,7 @@
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ #include <fx.h>
++#include <stdint.h>
+ #include "CommandLineHandler.h"
+ #include "ComboBox.h"
+ #include "FileDialog.h"
+@@ -449,7 +450,7 @@
+ long
+ PCEFrame::onOverride(FXObject *, FXSelector, void *a_data)
+ {
+-  if ((int) a_data)
++  if ((intptr_t) a_data)
+     {
+       m_overridePCE->enable();
+       m_overrideHeaderSize->enable();
+diff -urN uf-FOX-1.1-src/sms.cpp uf-FOX-1.1-src-pacthed/sms.cpp
+--- uf-FOX-1.1-src/sms.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-pacthed/sms.cpp	2011-07-30 23:06:36.738547941 +1100
+@@ -17,6 +17,7 @@
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ #include <fx.h>
++#include <stdint.h>
+ #include "CommandLineHandler.h"
+ #include "ComboBox.h"
+ #include "FileDialog.h"
+@@ -536,7 +537,7 @@
+ long
+ SMSFrame::onOverride(FXObject *, FXSelector, void *a_data)
+ {
+-  if ((int) a_data)
++  if ((intptr_t) a_data)
+     {
+       m_overrideSMS->enable();
+       m_overrideHeaderSize->enable();
+diff -urN uf-FOX-1.1-src/SNESControllerSettings.cpp uf-FOX-1.1-src-pacthed/SNESControllerSettings.cpp
+--- uf-FOX-1.1-src/SNESControllerSettings.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-pacthed/SNESControllerSettings.cpp	2011-07-30 22:33:29.792546735 +1100
+@@ -17,6 +17,7 @@
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ #include <fx.h>
++#include <stdint.h>
+ #include "SNESControllerSettings.h"
+ #include "Frontend.h"
+ 
+@@ -92,7 +93,7 @@
+ long
+ SNESControllerSettings::onUseSettings(FXObject *, FXSelector, void *a_data)
+ {
+-  if ((int) a_data)
++  if ((intptr_t) a_data)
+     {
+       m_controller1Label->enable();
+       m_controller1->enable();
+diff -urN uf-FOX-1.1-src/snes.cpp uf-FOX-1.1-src-pacthed/snes.cpp
+--- uf-FOX-1.1-src/snes.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-pacthed/snes.cpp	2011-07-30 23:01:22.549547750 +1100
+@@ -17,6 +17,7 @@
+   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+ #include <fx.h>
++#include <stdint.h>
+ #include "CommandLineHandler.h"
+ #include "ComboBox.h"
+ #include "FileDialog.h"
+@@ -1008,7 +1009,7 @@
+ long
+ SNESFrame::onOverride(FXObject *, FXSelector, void *a_data)
+ {
+-  if ((int) a_data)
++  if ((intptr_t) a_data)
+     {
+       m_overrideSNES->enable();
+       m_overrideHeaderSize->enable();

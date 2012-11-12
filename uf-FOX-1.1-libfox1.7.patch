@@ -1,0 +1,414 @@
+diff -urN uf-FOX-1.1-src/CommandLineHandler.cpp uf-FOX-1.1-src-patched/CommandLineHandler.cpp
+--- uf-FOX-1.1-src/CommandLineHandler.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/CommandLineHandler.cpp	2011-07-22 17:00:00.000000000 +1100
+@@ -307,7 +307,7 @@
+   textFieldOption = a_optionsWindow->getuCON64Path();
+   text = textFieldOption->getText().trim();
+   ptr = (char *) text.text();
+-  if (!FXFile::exists(ptr))
++  if (!FXStat::exists(ptr))
+     {
+       FXMessageBox::error(m_mainWindow, MBOX_OK, "uCON64 path is not correct",
+         "Please specify a correct uCON64 path in the options window");
+diff -urN uf-FOX-1.1-src/EditTextWindow.cpp uf-FOX-1.1-src-patched/EditTextWindow.cpp
+--- uf-FOX-1.1-src/EditTextWindow.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/EditTextWindow.cpp	2011-07-22 17:09:36.000000000 +1100
+@@ -53,8 +53,8 @@
+   new FXButton(windowArea, "Save", NULL, this, ID_SAVE,
+     BUTTON_NORMAL | LAYOUT_CENTER_X, 0, 0, 0, 0, 10, 10);
+ 
+-  FXFile::mode(m_filename, 0644);               // rw-r--r--
+-  int size = FXFile::size(m_filename);
++  FXStat::mode(m_filename, 0644);               // rw-r--r--
++  int size = FXStat::size(m_filename);
+   char *configFileContents = new char[size + 1];
+   ifstream configFile(m_filename, ios::in);
+   // NOT "| ios::binary", because under Windows it's a DOS text file
+@@ -83,7 +83,7 @@
+ long
+ EditTextWindow::onSave(FXObject *, FXSelector, void *)
+ {
+-  FXFile::mode(m_filename, 0644);               // rw-r--r--
++  FXStat::mode(m_filename, 0644);               // rw-r--r--
+   ofstream configFile(m_filename, ios::out);
+   if (!configFile)
+     {
+diff -urN uf-FOX-1.1-src/FileDialog.cpp uf-FOX-1.1-src-patched/FileDialog.cpp
+--- uf-FOX-1.1-src/FileDialog.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/FileDialog.cpp	2011-07-22 17:02:24.000000000 +1100
+@@ -53,7 +53,7 @@
+   if (opendialog.execute())
+     {
+       filename = opendialog.getFilename();
+-      if (FXFile::isFile(filename))
++      if (FXStat::isFile(filename))
+         return filename;
+     }
+   return FXString::null;
+@@ -86,7 +86,7 @@
+   if(dirdialog.execute())
+     {
+       dirname = dirdialog.getFilename();
+-      if (FXFile::isDirectory(dirname))
++      if (FXStat::isDirectory(dirname))
+         return dirname;
+     }
+   return FXString::null;
+diff -urN uf-FOX-1.1-src/Frontend.cpp uf-FOX-1.1-src-patched/Frontend.cpp
+--- uf-FOX-1.1-src/Frontend.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/Frontend.cpp	2011-07-22 16:15:22.000000000 +1100
+@@ -60,7 +60,7 @@
+ Frontend::create()
+ {
+   createFonts();                                // should *not* be called in the c'tor
+-  FXString mainTitle = FXStringFormat("uCON64 frontend %d.%d", UF_MAJOR, UF_MINOR);
++  FXString mainTitle = FXString::value("uCON64 frontend %d.%d", UF_MAJOR, UF_MINOR);
+   m_mainWindow = new MainWindow(this, mainTitle, m_bigIcon, m_smallIcon,
+     DECOR_ALL & ~DECOR_SHRINKABLE);
+   FXApp::create();                              // must be called *after*
+@@ -89,14 +89,14 @@
+   // FOX (<= 1.2) defaults to an ugly bold font under X
+   FXFont *font = getNormalFont();
+   FXFontDesc fontDesc;
+-  font->getFontDesc(fontDesc);
++  fontDesc = font->getFontDesc();
+ /*
+   printf("face: %s; size: %d; weight: %d; slant: %d; setwidth: %d; encoding: %d; flags: %d\n",
+          fontDesc.face, fontDesc.size, fontDesc.weight, fontDesc.slant,
+          fontDesc.setwidth, fontDesc.encoding, fontDesc.flags);
+   fflush(stdout);
+ */
+-  fontDesc.weight = FONTWEIGHT_MEDIUM; // FONTWEIGHT_REGULAR
++  fontDesc.weight = FXFont::Medium; // FONTWEIGHT_REGULAR
+   font = new FXFont(this, fontDesc);
+   setNormalFont(font);
+ 
+@@ -107,6 +107,6 @@
+   m_tinyFont = new FXFont(this, fontDesc);
+ 
+   fontDesc.size += 20;
+-  fontDesc.weight = FONTWEIGHT_BOLD;
++  fontDesc.weight = FXFont::Bold;
+   m_boldFont = new FXFont(this, fontDesc);
+ }
+diff -urN uf-FOX-1.1-src/gba.cpp uf-FOX-1.1-src-patched/gba.cpp
+--- uf-FOX-1.1-src/gba.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/gba.cpp	2011-07-22 17:17:02.000000000 +1100
+@@ -368,7 +368,7 @@
+     return 1;
+   else
+     {
+-      if (FXFile::exists(filename))
++      if (FXStat::exists(filename))
+         {
+           FXMessageBox::warning(this, MBOX_OK, "File already exists",
+             "Please specify a different file name");
+diff -urN uf-FOX-1.1-src/gb.cpp uf-FOX-1.1-src-patched/gb.cpp
+--- uf-FOX-1.1-src/gb.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/gb.cpp	2011-07-22 17:16:36.000000000 +1100
+@@ -315,7 +315,7 @@
+   char *filename = (char *) text.text();
+   if (!filename[0])
+     return 1;
+-  else if (FXFile::exists(filename))
++  else if (FXStat::exists(filename))
+     {
+       FXMessageBox::warning(this, MBOX_OK, "File already exists",
+         "Please specify a different file name");
+diff -urN uf-FOX-1.1-src/genesis.cpp uf-FOX-1.1-src-patched/genesis.cpp
+--- uf-FOX-1.1-src/genesis.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/genesis.cpp	2011-07-22 17:15:37.000000000 +1100
+@@ -499,7 +499,7 @@
+   char *filename = (char *) text.text();
+   if (!filename[0])
+     return 1;
+-  else if (FXFile::exists(filename))
++  else if (FXStat::exists(filename))
+     {
+       FXMessageBox::warning(this, MBOX_OK, "File already exists",
+         "Please specify a different file name");
+diff -urN uf-FOX-1.1-src/MainWindow.cpp uf-FOX-1.1-src-patched/MainWindow.cpp
+--- uf-FOX-1.1-src/MainWindow.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/MainWindow.cpp	2011-07-22 16:30:13.000000000 +1100
+@@ -109,7 +109,7 @@
+     "SMS/GG files (*.smd,*.gg,*.sms,gg*.040,gg*.048,gg*.060,gg*.078)\n"
+     "PCE/TG-16 files (*.pce,*.msg,pc*.030,pc*.040,pc*.048,pc*.058)\n"
+     "Compressed files (*.zip,*.gz)");
+-  m_fileSelector->setMatchMode(m_fileSelector->getMatchMode() | FILEMATCH_CASEFOLD);
++  m_fileSelector->setMatchMode(m_fileSelector->getMatchMode() | FXPath::CaseFold);
+   m_fileSelector->allowPatternEntry(TRUE);
+   m_fileSelector->setNumVisibleFilter(4);       // FOX 1.3 displays too many items
+ 
+@@ -230,10 +230,10 @@
+   // Note: m_nSelectedFiles doesn't have the correct value if the user selected
+   //       some files in the Browse tab and then disables it.
+   if (a_showSelectedFilesNo)
+-    mainTitle = FXStringFormat("uCON64 frontend %d.%d - %d file%s selected",
++    mainTitle = FXString::value("uCON64 frontend %d.%d - %d file%s selected",
+       UF_MAJOR, UF_MINOR, m_nSelectedFiles, m_nSelectedFiles == 1 ? "" : "s");
+   else
+-    mainTitle = FXStringFormat("uCON64 frontend %d.%d", UF_MAJOR, UF_MINOR);
++    mainTitle = FXString::value("uCON64 frontend %d.%d", UF_MAJOR, UF_MINOR);
+   setTitle(mainTitle);
+ }
+ 
+@@ -245,9 +245,9 @@
+   FXFontDesc *fontDescs;
+   FXuint nfontDescs;
+ 
+-  if (FXFont::listFonts(fontDescs, nfontDescs, a_name, FONTWEIGHT_DONTCARE,
+-        FONTSLANT_REGULAR, /* FONTSLANT_DONTCARE, */ FONTSETWIDTH_DONTCARE,
+-        FONTENCODING_DEFAULT, FONTPITCH_FIXED) == TRUE) // FONTPITCH_DEFAULT
++  if (FXFont::listFonts(fontDescs, nfontDescs, a_name, 0,
++        0, /* FONTSLANT_DONTCARE, */ 0,
++        0, 0) == TRUE) // FONTPITCH_DEFAULT
+     {
+       FXuint n;
+       char description[80];
+@@ -262,9 +262,9 @@
+           fflush(stdout);
+ */
+           if (((fontDescs[n].size > 85 && fontDescs[n].size < 100) ||
+-                (fontDescs[n].flags & FONTHINT_SCALABLE)) &&
+-              (fontDescs[n].weight == FONTWEIGHT_REGULAR ||
+-               fontDescs[n].weight == FONTWEIGHT_MEDIUM))
++                (fontDescs[n].flags & FXFont::Scalable)) &&
++              (fontDescs[n].weight == FXFont::Normal ||
++               fontDescs[n].weight == FXFont::Medium))
+             {
+ //              printf("Found font: %s (%sscalable)\n", fontDescs[n].face,
+ //                fontDescs[n].flags & FONTHINT_SCALABLE ? "" : "not ");
+@@ -395,7 +395,7 @@
+ MainWindow::onAbout(FXObject *, FXSelector, void *)
+ {
+   FXDialogBox *aboutWindow = new FXDialogBox(this, "About uCON64 frontend");
+-  FXString aboutText = FXStringFormat(
++  FXString aboutText = FXString::value(
+     "\n"
+     "A graphical frontend for the\n"
+     "ROM tool uCON64. Version %d.%d.\n"
+diff -urN uf-FOX-1.1-src/Makefile uf-FOX-1.1-src-patched/Makefile
+--- uf-FOX-1.1-src/Makefile	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/Makefile	2011-07-22 16:03:41.244239055 +1100
+@@ -78,7 +78,7 @@
+ 
+ 
+ icons.h: $(ICONS)
+-	reswrap -i -o $@ $(ICONS)
++	reswrap -o $@ $(ICONS)
+ 
+ 
+ icons.cpp: $(ICONS)
+diff -urN uf-FOX-1.1-src/MultiGameFileSelector.cpp uf-FOX-1.1-src-patched/MultiGameFileSelector.cpp
+--- uf-FOX-1.1-src/MultiGameFileSelector.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/MultiGameFileSelector.cpp	2011-07-22 17:14:02.000000000 +1100
+@@ -117,17 +117,17 @@
+       int n = 0;
+       while (filenames[n][0])
+         {
+-          int size = FXFile::size(filenames[n]);
++          int size = FXStat::size(filenames[n]);
+           if (size % 32768 == 512)
+             size -= 512;                        // quick hack to handle backup unit headers
+-          m_selectedFiles->appendItem(new FXListItem(FXFile::name(filenames[n]),
++          m_selectedFiles->appendItem(new FXListItem(FXPath::name(filenames[n]),
+             NULL, new FileInfo(filenames[n], size)));
+           m_totalSize += (size + m_blockSize - 1) & ~(m_blockSize - 1);
+           n++;
+         }
+       delete [] filenames;
+     }
+-  m_totalSizeLabel->setText(FXStringFormat("Total size: %d Mbit",
++  m_totalSizeLabel->setText(FXString::value("Total size: %d Mbit",
+     (m_totalSize + 128 * 1024 - 1) / (128 * 1024))); // round up
+   if (m_totalSize == 0)
+     m_removeButton->disable();
+@@ -159,10 +159,10 @@
+       int n = 0;
+       while (filenames[n][0])
+         {
+-          int size = FXFile::size(filenames[n]);
++          int size = FXStat::size(filenames[n]);
+           if (size % 32768 == 512)
+             size -= 512;                        // quick hack to handle backup unit headers
+-          m_selectedFiles->appendItem(new FXListItem(FXFile::name(filenames[n]),
++          m_selectedFiles->appendItem(new FXListItem(FXPath::name(filenames[n]),
+             NULL, new FileInfo(filenames[n], size)));
+           m_totalSize += (size + m_blockSize - 1) & ~(m_blockSize - 1);
+           n++;
+@@ -173,7 +173,7 @@
+     FXMessageBox::information(this, MBOX_OK, "No file selected",
+       "Please select a file on the left");
+ 
+-  m_totalSizeLabel->setText(FXStringFormat("Total size: %d Mbit",
++  m_totalSizeLabel->setText(FXString::value("Total size: %d Mbit",
+     (m_totalSize + 128 * 1024 - 1) / (128 * 1024)));
+   if (m_totalSize)
+     m_removeButton->enable();
+@@ -205,7 +205,7 @@
+   if (!fileSelected)
+     FXMessageBox::information(this, MBOX_OK, "No file selected",
+       "Please select a file on the right");
+-  m_totalSizeLabel->setText(FXStringFormat("Total size: %d Mbit",
++  m_totalSizeLabel->setText(FXString::value("Total size: %d Mbit",
+     (m_totalSize + 128 * 1024 - 1) / (128 * 1024)));
+   if (m_totalSize)
+     m_removeButton->enable();
+diff -urN uf-FOX-1.1-src/n64.cpp uf-FOX-1.1-src-patched/n64.cpp
+--- uf-FOX-1.1-src/n64.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/n64.cpp	2011-07-22 17:18:28.000000000 +1100
+@@ -468,7 +468,7 @@
+   char *filename = (char *) text.text();
+   if (!filename[0])
+     return 1;
+-  else if (FXFile::exists(filename))
++  else if (FXStat::exists(filename))
+     {
+       FXMessageBox::warning(this, MBOX_OK, "File already exists",
+         "Please specify a different file name");
+@@ -535,7 +535,7 @@
+         "Please specify a boot code file name");
+       return 1;
+     }
+-  else if (!FXFile::exists(filename))
++  else if (!FXStat::exists(filename))
+     {
+       FXMessageBox::warning(this, MBOX_OK,
+         "Specified boot code file does not exist",
+@@ -586,7 +586,7 @@
+     }
+   // also check for the existence of the file, because the action of --bot
+   //  is determinded by it
+-  else if (FXFile::exists(filename))
++  else if (FXStat::exists(filename))
+     {
+       FXMessageBox::warning(this, MBOX_OK, "File already exists",
+         "Please specify a different file name");
+diff -urN uf-FOX-1.1-src/nes.cpp uf-FOX-1.1-src-patched/nes.cpp
+--- uf-FOX-1.1-src/nes.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/nes.cpp	2011-07-22 17:19:11.000000000 +1100
+@@ -367,7 +367,7 @@
+   char *filename = (char *) text.text();
+   if (!filename[0])
+     return 1;
+-  else if (FXFile::exists(filename))
++  else if (FXStat::exists(filename))
+     {
+       FXMessageBox::warning(this, MBOX_OK, "File already exists",
+         "Please specify a different file name");
+@@ -483,7 +483,7 @@
+       ptr = (char *) text.text();
+       if (ptr[0])                               // specifying a dumper info file
+         {                                       //  is optional
+-          if (!FXFile::exists(ptr))
++          if (!FXStat::exists(ptr))
+             {
+               FXMessageBox::warning(this, MBOX_OK,
+                 "Specified dumper info file does not exist",
+diff -urN uf-FOX-1.1-src/ngp.cpp uf-FOX-1.1-src-patched/ngp.cpp
+--- uf-FOX-1.1-src/ngp.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/ngp.cpp	2011-07-22 17:20:47.000000000 +1100
+@@ -204,7 +204,7 @@
+     return 1;
+   else
+     {
+-      if (FXFile::exists(filename))
++      if (FXStat::exists(filename))
+         {
+           FXMessageBox::warning(this, MBOX_OK, "File already exists",
+             "Please specify a different file name");
+diff -urN uf-FOX-1.1-src/OptionsWindow.cpp uf-FOX-1.1-src-patched/OptionsWindow.cpp
+--- uf-FOX-1.1-src/OptionsWindow.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/OptionsWindow.cpp	2011-07-22 16:58:25.000000000 +1100
+@@ -385,19 +385,19 @@
+     {
+       FXString startPath2, startPath3;
+ 
+-      startPath2 = FXFile::directory(m_F2ALogoPath->getText());
++      startPath2 = m_F2ALogoPath->getText();
+       if (!startPath2.empty()) // && !FXFile::identical(startPath2, startPath))
+         startPath3 = startPath2;
+ 
+-      startPath2 = FXFile::directory(m_F2AClientParPortPath->getText());
++      startPath2 = m_F2AClientParPortPath->getText();
+       if (!startPath2.empty()) // && !FXFile::identical(startPath2, startPath))
+         startPath3 = startPath2;
+ 
+-      startPath2 = FXFile::directory(m_F2AClientUSBPath->getText());
++      startPath2 = m_F2AClientUSBPath->getText();
+       if (!startPath2.empty()) // && !FXFile::identical(startPath2, startPath))
+         startPath3 = startPath2;
+ 
+-      startPath2 = FXFile::directory(m_F2AFirmwarePath->getText());
++      startPath2 = m_F2AFirmwarePath->getText();
+       if (!startPath2.empty()) // && !FXFile::identical(startPath2, startPath))
+         startPath3 = startPath2;
+ 
+@@ -421,7 +421,7 @@
+   char configFileName[FILENAME_MAX];
+   FXString text = m_configFileDir->getText().trim();
+   sprintf(configFileName, "%s"PATHSEPSTRING".ucon64rc", text.text());
+-  if (!FXFile::exists(configFileName))
++  if (!FXStat::exists(FXString(configFileName)))
+     {
+       FXMessageBox::error(this, MBOX_OK, "Specified configuration file does not exist",
+         "Please specify a correct configuration file directory\n"
+@@ -600,8 +600,8 @@
+           m_toolTip = new FXToolTip(app);           // enable tool tip messages
+           if (value != -1)
+             m_toolTip->create();                    // must not be called at construction time!
+-          app->setTooltipTime(4000);                // time (in ms) to display message
+-          app->setTooltipPause(1000);
++          app->setToolTipTime(4000);                // time (in ms) to display message
++          app->setToolTipPause(1000);
+         }
+     }
+   else
+diff -urN uf-FOX-1.1-src/pce.cpp uf-FOX-1.1-src-patched/pce.cpp
+--- uf-FOX-1.1-src/pce.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/pce.cpp	2011-07-22 17:20:16.000000000 +1100
+@@ -270,7 +270,7 @@
+     return 1;
+   else
+     {
+-      if (FXFile::exists(filename))
++      if (FXStat::exists(filename))
+         {
+           FXMessageBox::warning(this, MBOX_OK, "File already exists",
+             "Please specify a different file name");
+diff -urN uf-FOX-1.1-src/ProgressDialog.cpp uf-FOX-1.1-src-patched/ProgressDialog.cpp
+--- uf-FOX-1.1-src/ProgressDialog.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/ProgressDialog.cpp	2011-07-22 17:00:56.000000000 +1100
+@@ -105,7 +105,7 @@
+   if (nSecondsLeft > 99 * 60 + 59)              // just in case :-)
+     nSecondsLeft = 99 * 60 + 59;
+ 
+-  FXString timeString = FXStringFormat("ETA=%02d:%02d",
++  FXString timeString = FXString::value("ETA=%02d:%02d",
+     nSecondsLeft / 60, nSecondsLeft % 60);
+   m_timeInfo->setText(timeString);
+ }
+diff -urN uf-FOX-1.1-src/sms.cpp uf-FOX-1.1-src-patched/sms.cpp
+--- uf-FOX-1.1-src/sms.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/sms.cpp	2011-07-22 17:19:46.000000000 +1100
+@@ -326,7 +326,7 @@
+     return 1;
+   else
+     {
+-      if (FXFile::exists(filename))
++      if (FXStat::exists(filename))
+         {
+           FXMessageBox::warning(this, MBOX_OK, "File already exists",
+             "Please specify a different file name");
+diff -urN uf-FOX-1.1-src/snes.cpp uf-FOX-1.1-src-patched/snes.cpp
+--- uf-FOX-1.1-src/snes.cpp	2005-03-04 08:24:23.000000000 +1000
++++ uf-FOX-1.1-src-patched/snes.cpp	2011-07-22 17:14:54.000000000 +1100
+@@ -598,7 +598,7 @@
+   else
+     {
+       // TODO?: Strip quotes from string
+-      if (FXFile::exists(filename))
++      if (FXStat::exists(filename))
+         {
+           FXMessageBox::warning(this, MBOX_OK, "File already exists",
+             "Please specify a different file name");
