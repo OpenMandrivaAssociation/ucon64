@@ -1,7 +1,7 @@
 Summary:	Console ROM backup tool
 Name:		ucon64
 Version:	2.0.0
-Release:	9
+Release:	10
 Group:		Emulators
 License:	GPLv2
 URL:		http://ucon64.sf.net/
