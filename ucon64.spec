@@ -4,7 +4,7 @@ Version:	2.0.0
 Release:	10
 Group:		Emulators
 License:	GPLv2
-URL:		http://ucon64.sf.net/
+URL:		https://ucon64.sf.net/
 Source0:	http://prdownloads.sourceforge.net/ucon64/%{name}-%{version}-src.tar.bz2
 Source1:	http://prdownloads.sourceforge.net/ucon64/uf-FOX-1.1-src.tgz
 Patch0:		uf-FOX-1.1-libfox1.7.patch
