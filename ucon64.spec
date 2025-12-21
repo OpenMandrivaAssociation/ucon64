@@ -11,6 +11,11 @@ Patch0:		uf-FOX-1.1-libfox1.7.patch
 Patch1:		uf-FOX-1.1-ptrfix.patch
 Patch2:		ucon64-2.0.0-gzfile.patch
 Patch3:		ucon64-2.0.0-ovflfix.patch
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	libusb-devel
 BuildRequires:	zlib-devel
 BuildRequires:	fox1.7-devel
